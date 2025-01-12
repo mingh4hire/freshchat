@@ -39,18 +39,11 @@ app.get('/add', (req, res) => {
 app.get('/:room', (req, res) => {
   res.render('room', { roomId: req.params.room })
 })
-// app.use('/', ExpressPeerServer(server));
-// const peerServer = ExpressPeerServer(server, {
-//   proxied: false,
-//   debug: true,
-//   // path: "/peerjs",
-//   ssl: {},
-// });
-// app.use(  ExpressPeerServer);
 const peerServer = ExpressPeerServer(server, {
    path: '/myapp2' // Optional: specify a path for the PeerJS server
 });
 
+console.log(peerServer);
 app.use('/peerjs', peerServer); // Mount the 
 //  server at a specific path
 
