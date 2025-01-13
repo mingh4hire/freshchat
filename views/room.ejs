@@ -7,6 +7,8 @@
   <script>
     const ROOM_ID = "<%= roomId %>"
   </script>
+  <script src="/socket.io/socket.io.js"></script>
+
   <script defer src="https://unpkg.com/peerjs@1.2.0/dist/peerjs.min.js"></script>
   <!-- <script src="/socket.io/socket.io.js" defer></script> -->
   <script src="script.js" defer></script>
@@ -26,6 +28,58 @@
   </style>
 </head>
 <body>
+  <div><label style="margin-right:1rem;">My ID</label><span id="myId"></span></div>  
+  <div><select id="selector"></select>
+  </div>
   <div id="video-grid"></div>
+  <div>
+    <input type="text" id="connectId" />
+    <button id="connectBtn" onclick="connectToPeer()">Connect</button>
+  </div>
+  <div>
+    <input type="text" id="messageInput" />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+  <!-- <button
+  onclick="
+    (stream.getVideoTracks()[0].enabled =
+      !stream.getVideoTracks()[0].enabled)"> pause/play</button> -->
+
+
+  <div id="userList"></div> 
+  <div id="messageList"></div>
+  <script>
+  
+  </script>
 </body>
+
+<script>
+  function connectToPeer() {
+    const peerId = document.querySelector('#connectId').value;
+    console.log(peerId);
+    connectToNewUser(peerId, outgoingstream);
+  }
+  // Function to send a message
+  
+  if (false)
+  fetch('/list')
+    .then(response => response.json())
+    .then(data => {
+      console.log(data , ' is data');
+      const dropdown = document.querySelector('#selector');
+      dropdown.multiple = true;
+      dropdown.size = data.length;
+      data.forEach(user => {
+        const option = document.createElement('option');
+        option.value = user;
+        option.text = user;
+        dropdown.appendChild(option);
+      });
+      document.body.appendChild(dropdown);
+    })
+    .catch(error => {
+      
+      console.error('Error:', error);
+    });
+</script>
 </html>
