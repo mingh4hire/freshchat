@@ -46,7 +46,7 @@ app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 app.post('/', (req, res) => {
   const { username, password } = req.body;
-  if (password === 'excite') {
+  if (password === fs.readFileSync('mima.txt').toString().split(String.fromCharCode(10))[0]) {
     req.session.username = username;
     res.redirect('/');
   } else {
