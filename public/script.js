@@ -2,19 +2,46 @@
  var datalist = [];
  
  var userId='';
-
-
-
-const socket = io('/');
-const videoGrid = document.getElementById('video-grid')
-const myPeer = new Peer(undefined, {
+ const myPeer = new Peer(undefined, {
   host: '/',
   port: 443,
   path: '/peerjs/myapp2'
   //
   // secure: true
 })
-var outgoingstream;
+var outgoingstreamprom = new Promise((resolve, reject) => {
+  navigator.mediaDevices.getUserMedia({
+    video: true,
+    audio: true
+  }).then(stream => {
+    resolve(stream);
+  })
+});
+var outgoingstream = [] ;
+async function getoutgoingstream(){
+  return await outgoingstreamprom;
+}
+myPeer.on('call', async call =>  {
+  await callresponse(call);
+})
+async function callresponse(call){
+  outgoing = await getoutgoingstream();
+  console.log('outgoing is ' , outgoing)
+  call.answer(outgoing)
+  const video = document.createElement('video')
+  call.on('stream', userVideoStream => {
+    addVideoStream(video, userVideoStream)
+  })
+  call.on("close", function() {
+    console.log("closingit", call.peer);
+    video.remove();
+    fetch('/remove?id='+call.peer)
+  });
+
+}
+const socket = io('/');
+const videoGrid = document.getElementById('video-grid')
+
 const myVideo = document.createElement('video')
 myVideo.muted = true
 const peers = {}
@@ -32,28 +59,16 @@ navigator.mediaDevices.getUserMedia({
     const userListElement = document.getElementById('userList')
     userListElement.appendChild(userElement)
     console.log('about to connect to user on stream' ,peerId, stream);
-    setTimeout(() => {
+    // setTimeout(() => {
       connectToNewUser(peerId, stream);
-    }, 1000);
+    // }, 4000);
     // connectToNewUser(peerId, stream);
   
   });
-  myPeer.on('call', call => {
-    call.answer(stream)
-    const video = document.createElement('video')
-    call.on('stream', userVideoStream => {
-      addVideoStream(video, userVideoStream)
-    })
-    call.on("close", function() {
-      console.log("closingit", call.peer);
-      video.remove();
-      fetch('/remove?id='+call.peer)
-    });
 
-  })
-  outgoingstream = stream;
+  // outgoingstream = stream;
 })
- 
+
 myPeer.on('open', id => {
   userId = id;
   console.log('joining room ' , ROOM_ID, id);
